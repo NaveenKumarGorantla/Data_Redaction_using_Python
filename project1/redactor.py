@@ -242,34 +242,35 @@ def output(files, data,filename):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--input", type=str, required=True, help="Source Text File Location", nargs='*', action='append')
-    parser.add_argument("--names", required=False, help="Redact/Remove Names if mentioned", action='store_true')
-    parser.add_argument("--genders", required=False, help="Redact/Remove genders sensitive information ", action='store_true')
-    parser.add_argument("--dates", required=False, help="Redact/Remove dates information", action='store_true')
-    parser.add_argument("--phones", required=False, help="Redact/Remove phone numbers information", action='store_true')
-    parser.add_argument("--concept", type=str, required=False, help="Redact/Remove based on the keyword provided", action='append')
-    parser.add_argument("--stats", type=str, required=False, help="Provides statistics of redacted files")
-    parser.add_argument("--output", type=str, required=True, help="File location of Redacted files")
+
+    argparser = argparse.ArgumentParser()
+    argparser.add_argument("--input", type=str, required=True, help="Source Text File Location", nargs='*', action='append')
+    argparser.add_argument("--names", required=False, help="Redact/Remove Names if mentioned", action='store_true')
+    argparser.add_argument("--genders", required=False, help="Redact/Remove genders sensitive information ", action='store_true')
+    argparser.add_argument("--dates", required=False, help="Redact/Remove dates information", action='store_true')
+    argparser.add_argument("--phones", required=False, help="Redact/Remove phone numbers information", action='store_true')
+    argparser.add_argument("--concept", type=str, required=False, help="Redact/Remove based on the keyword provided", action='append')
+    argparser.add_argument("--stats", type=str, required=False, help="Provides statistics of redacted files")
+    argparser.add_argument("--output", type=str, required=True, help="File location of Redacted files")
    
-    args = parser.parse_args()
+    parse_args =argparser.parse_args()
    #print("args_input:", args.input, args.names)
-    data = data_input(args.input)
+    data = data_input(parse_args.input)
     #print("data from data_input",data)
-    if(args.genders):
+    if(parse_args.genders):
         data = redact_genders(data)
-    if(args.names):
+    if(parse_args.names):
         data = redact_names(data)
-    if(args.phones):
+    if(parse_args.phones):
         data = redact_phones(data)
-    if(args.dates):
+    if(parse_args.dates):
         data = redact_dates(data)
-    if(args.concept):
-        data = redact_concept(data,args.concept)
-    output(args.input,data,args.output)
-    unredacted_data = data_input(args.input)
+    if(parse_args.concept):
+        data = redact_concept(data,parse_args.concept)
+    output(parse_args.input,data,parse_args.output)
+    unredacted_data = data_input(parse_args.input)
     #print('dictionary1:',dictionary1)
-    if(args.stats):
+    if(parse_args.stats):
        statistics_data = get_statistics_data(unredacted_data)
        extract_statistics(statistics_data)
 
