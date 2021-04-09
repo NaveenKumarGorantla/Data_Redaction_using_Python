@@ -17,6 +17,7 @@ nltk.download('words')
 nltk.download('wordnet')
 nltk.download('punkt')
 #nltk.download('all')
+dictionary1 = {}
 def data_input(input_files):
     list_filedata = []
     list_filepaths =[]
@@ -52,7 +53,8 @@ def redact_names(list_filedata):
             for name in list_person_names:
                 redact = u"\u2588" * len(name)
                 textdata = textdata.replace(name,redact)
-        redacted_names_data.append(textdata)
+        redacted_names_data.append(textdata)  
+
     return redacted_names_data     
 
 def redact_phones(list_filedata):
@@ -66,10 +68,12 @@ def redact_phones(list_filedata):
             redact = u"\u2588" * len(phonenumber)
             textdata = textdata.replace(phonenumber, redact)
         redacted_phone_data.append(textdata)
+    
+
+
     return redacted_phone_data
 
 def redact_genders(list_filedata):
-
     gender = ['actress', 'aunt', 'aunts', 'boy', 'boyfriend', 'boyfriends', 'boys', 'bride', 'brother', 'brothers', 'chairman', 'chairwoman', 'dad', 'dads', 'daughter',
               'daughters', 'dude', 'father', 'fathers', 'female', 'fiance', 'fiancee', 'gentleman', 'gentlemen', 'girl', 'girlfriend', 'girlfriends', 'girls', 'god',
               'goddess', 'granddaughter', 'grandfather', 'grandma', 'grandmother', 'grandpa', 'grandson', 'groom', 'guy', 'he', "he's", 'her', 'heroine', 'herself', 'him',
@@ -79,7 +83,7 @@ def redact_genders(list_filedata):
               "women's"]
 
     redacted_data = []
-    gender = [i.lower() for i in gender]    
+    gender = [i.lower() for i in gender]
     for data in list_filedata:
         redacted_gender_data = []
         for sentence in sent_tokenize(data):
@@ -99,6 +103,7 @@ def redact_genders(list_filedata):
 
 
 def redact_dates(list_filedata):
+
     redacted_data = []
     for dates in list_filedata:
         date1 = re.findall(r'\d{1,2}\w?\w?\s+(?:January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct            |Nov|Dec)\s+\d{4}',dates)
@@ -114,6 +119,7 @@ def redact_dates(list_filedata):
         for element in date1:
             dates= dates.replace(element, u"\u2588" * len(element))
         redacted_data.append(dates)
+    
     return redacted_data
 
 def redact_concept(list_filedata, word):
@@ -143,7 +149,6 @@ def redact_concept(list_filedata, word):
                     data = data.replace(word, redact)
         redacted_concepts.append(data)
     return redacted_concepts
-
 
 def get_statistics_data(list_filedata):
     dict = {}
@@ -215,17 +220,16 @@ def extract_statistics(dict):
     stderrfile.close()
 
 
-def output(files, data, name):
-    allfiles = []
+def output(files, data,filename):
+    list_files = []
    # print(data)
     for i in files:
         for file in i:
-            allfiles.append(glob.glob(file))
-    print('all files', allfiles)
-    flattenf = nltk.flatten(allfiles)
-    newfilepath = os.path.join(os.getcwd(), name)
-    for j in range(len(flattenf)):
-        getpath = os.path.splitext(flattenf[j])[0]
+            list_files.append(glob.glob(file))
+    flattenfiles = nltk.flatten(list_files)
+    newfilepath = os.path.join(os.getcwd(), filename)
+    for j in range(len(flattenfiles)):
+        getpath = os.path.splitext(flattenfiles[j])[0]
         getpath = os.path.basename(getpath) + '.redacted'
         if not os.path.exists(newfilepath):
             os.makedirs(newfilepath)
@@ -263,7 +267,11 @@ if __name__ == '__main__':
     if(args.concept):
         data = redact_concept(data,args.concept)
     output(args.input,data,args.output)
-    x = data_input(args.input)
+    unredacted_data = data_input(args.input)
+    #print('dictionary1:',dictionary1)
     if(args.stats):
-       statistics_data = get_statistics_data(x)
+       statistics_data = get_statistics_data(unredacted_data)
        extract_statistics(statistics_data)
+
+
+
