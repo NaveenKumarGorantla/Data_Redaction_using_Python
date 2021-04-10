@@ -18,8 +18,9 @@ nltk.download('wordnet')
 nltk.download('punkt')
 #nltk.download('all')
 def data_input(input_files):
-    if ( len(input_files) == 0):
-        raise   Exception('empty values')
+    print('input files',input_files)
+    #if ( len(input_files) == 0):
+     #   raise   Exception('empty values')
     list_filedata = []
     list_filepaths =[]
     for eachfile in input_files:
@@ -302,7 +303,7 @@ if __name__ == '__main__':
         data = redact_dates(data)
     if(parse_args.concept):
         data = redact_concept(data,parse_args.concept)
-
+    print('fsdfs',parse_args.output)
     file_output(parse_args.input,data,parse_args.output)
 
     unredacted_data = data_input(parse_args.input)
