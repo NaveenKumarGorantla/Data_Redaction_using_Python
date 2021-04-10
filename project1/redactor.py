@@ -17,7 +17,6 @@ nltk.download('words')
 nltk.download('wordnet')
 nltk.download('punkt')
 #nltk.download('all')
-dictionary1 = {}
 def data_input(input_files):
     list_filedata = []
     list_filepaths =[]
@@ -40,7 +39,9 @@ def redact_names(list_filedata):
     redacted_names_data = []
     label = "PERSON"
     list_person_names = []
-    for textdata in list_filedata:
+    i = 0
+    while i < len(list_filedata):
+        textdata = list_filedata[i]
         for sentences in sent_tokenize(textdata):
             word_tokens = word_tokenize(sentences)
             tagged_tokens = nltk.pos_tag(word_tokens)
@@ -53,7 +54,9 @@ def redact_names(list_filedata):
             for name in list_person_names:
                 redact = u"\u2588" * len(name)
                 textdata = textdata.replace(name,redact)
-        redacted_names_data.append(textdata)  
+        redacted_names_data.append(textdata)
+       
+        i = i + 1
 
     return redacted_names_data     
 
@@ -68,9 +71,6 @@ def redact_phones(list_filedata):
             redact = u"\u2588" * len(phonenumber)
             textdata = textdata.replace(phonenumber, redact)
         redacted_phone_data.append(textdata)
-    
-
-
     return redacted_phone_data
 
 def redact_genders(list_filedata):
@@ -84,7 +84,10 @@ def redact_genders(list_filedata):
 
     redacted_data = []
     gender = [i.lower() for i in gender]
-    for data in list_filedata:
+    i = 0
+    while i < len(list_filedata):
+        data = list_filedata[0]
+   # for data in list_filedata:
         redacted_gender_data = []
         for sentence in sent_tokenize(data):
             redacted_words = []
@@ -98,6 +101,7 @@ def redact_genders(list_filedata):
             redacted_sentences = ' '.join([str(x) for x in redacted_words])
             redacted_gender_data.append(redacted_sentences)
         file_data = ' '.join([str(x) for x in redacted_gender_data])
+        i = i + 1
         redacted_data.append(file_data)
     return redacted_data
 
@@ -106,17 +110,15 @@ def redact_dates(list_filedata):
 
     redacted_data = []
     for dates in list_filedata:
-        date1 = re.findall(r'\d{1,2}\w?\w?\s+(?:January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct            |Nov|Dec)\s+\d{4}',dates)
-        date2 = re.findall( r'(?:January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)[\s,]            \d{1,2}[\s,]*\d{2,4}',dates)
-        for element in date2:
-            date1.append(element)
-        date3 = re.findall(r'\d{2}[/-]\d{2}[/-]\d{4}', dates)
-        for element in date3:
-            date1.append(element)
-        date4= re.findall( r'(?:January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)',dates)
-        for element in date4:
-            date1.append(element)
-        for element in date1:
+        dateformat1 = re.findall(r'\d{1,2}\w?\w?\s+(?:January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct            |Nov|Dec)\s+\d{4}',dates)
+        dateformat2 = re.findall( r'(?:January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)[\s,]            \d{1,2}[\s,]*\d{2,4}',dates)
+       
+        dateformat3 = re.findall(r'\d{2}[/-]\d{2}[/-]\d{4}', dates)
+        for element in dateformat2:
+            dateformat1.append(element)
+        for element in dateformat3:
+            dateformat1.append(element)
+        for element in dateformat1:
             dates= dates.replace(element, u"\u2588" * len(element))
         redacted_data.append(dates)
     
@@ -130,16 +132,16 @@ def redact_concept(list_filedata, word):
             for l in synonyms.hyponyms():
                 x=l.lemma_names()
                 list_word_synonyms.append(x)
-    #print("synonyms list:",list_word_synonyms)
     total_list = []
     total_list = word.copy()
     for item in list_word_synonyms:
         for i in item:
             total_list.append(i)
     redacted_concepts = []
-   #print("all", total_list)
-   #print(" ".join(total_list))
-    for data in list_filedata:
+    i = 0
+    while i < len(list_filedata):
+        data = list_filedata[i]
+    #for data in list_filedata:
         sentences = sent_tokenize(data)
         for sentence in sentences:
             words = word_tokenize(sentence)
@@ -147,80 +149,98 @@ def redact_concept(list_filedata, word):
                 if word in total_list:
                     redact = u'\u2588'*len(word)
                     data = data.replace(word, redact)
+        i = i + 1
         redacted_concepts.append(data)
     return redacted_concepts
 
 def get_statistics_data(list_filedata):
-    dict = {}
+    dict_stats = {}
     names_redacted = redact_names(list_filedata)
     count_names_redacted = []
-    for i in range(0, len(names_redacted)):
+    i = 0
+    while i < len(names_redacted):
         collection = []
         count = 0
         wordlist = word_tokenize(names_redacted[i])
-        #collection.append(wordlist)
         collection = wordlist.copy()
-        #print("x",x)
-        #print("collection:",collection)
-        for word in collection:
+        j = 0
+        while j < len(collection):
+            word = collection[j]
             pattern = u'\u2588' * len(word)  
             if word == pattern:
                 count += 1
+            j = j + 1
         count_names_redacted.append(count)
-    dict['names_redacted'] = count_names_redacted
+        i = i + 1
+    dict_stats['names_redacted'] = count_names_redacted
 
     dates_redacted = redact_dates(list_filedata)
+    i = 0
     count_dates_redacted = []
-    for i in range(0, len(dates_redacted)):
+    while i < len(dates_redacted):
         collection = []
         count = 0
         wordlist = word_tokenize(dates_redacted[i])
         collection = wordlist.copy()
-        for word in collection:
+        j = 0
+        while j < len(collection):
+            word = collection[j]
             pattern = u'\u2588' * len(word)
             if word == pattern:
                 count += 1
+            j = j + 1
         count_dates_redacted.append(count)
-    dict['dates_redacted'] = count_dates_redacted
+        i = i + 1
+    dict_stats['dates_redacted'] = count_dates_redacted
 
     genders_redacted = redact_genders(list_filedata)
     count_genders_redacted = []
-    for i in range(0, len(genders_redacted)):
+    i = 0
+    while i < len(genders_redacted):
         collection = []
         count = 0
         wordlist = word_tokenize(genders_redacted[i])
         collection = wordlist[:]
-        for word in collection:
+        j = 0
+        while j < len(collection):
+            word = collection[j]
             pattern = u'\u2588' * len(word)
             if word == pattern:
                 count += 1
+            j = j + 1
         count_genders_redacted.append(count)
-    dict['genders_redacted'] = count_genders_redacted
+        i = i + 1
+    dict_stats['genders_redacted'] = count_genders_redacted
 
     phones_redacted = redact_phones(list_filedata)
     count_phones_redacted = []
-    for i in range(0, len(phones_redacted)):
+    i = 0
+    while i < len(phones_redacted):
         collection= []
         count = 0
         wordlist = word_tokenize(phones_redacted[i])
         collection = wordlist.copy()
-        for word in collection:
+        j = 0
+        while j < len(collection):
+            word = collection[j]
             pattern = u'\u2588' * len(word)
             if word == pattern:
                 count += 1
+            j = j + 1
         count_phones_redacted.append(count)
-    dict['phonenumber_redacted'] = count_phones_redacted
+        i = i + 1
 
-    return dict
-
-def extract_statistics(dict):
+    dict_stats['phonenumber_redacted'] = count_phones_redacted
     stderrfile = open('./stderr/stderr.txt', 'w', encoding='utf-8')
-    for key, value in dict.items():
+    for key, value in dict_stats.items():
         stderrfile.write(str(key) + ' >>> ' + str(value) + '\n')
     stderrfile.close()
 
+    return dict_stats
 
-def output(files, data,filename):
+
+
+def file_output(files, data,filename):
     list_files = []
    # print(data)
     for i in files:
@@ -228,7 +248,8 @@ def output(files, data,filename):
             list_files.append(glob.glob(file))
     flattenfiles = nltk.flatten(list_files)
     newfilepath = os.path.join(os.getcwd(), filename)
-    for j in range(len(flattenfiles)):
+    j = 0
+    while j < len(flattenfiles):
         getpath = os.path.splitext(flattenfiles[j])[0]
         getpath = os.path.basename(getpath) + '.redacted'
         if not os.path.exists(newfilepath):
@@ -238,6 +259,7 @@ def output(files, data,filename):
         elif os.path.exists(newfilepath):
             with open(os.path.join(newfilepath, getpath), 'w') as outputfile:
                 outputfile.write(data[j])
+        j = j + 1
 
 
 
@@ -267,12 +289,9 @@ if __name__ == '__main__':
         data = redact_dates(data)
     if(parse_args.concept):
         data = redact_concept(data,parse_args.concept)
-    output(parse_args.input,data,parse_args.output)
+
+    file_output(parse_args.input,data,parse_args.output)
+
     unredacted_data = data_input(parse_args.input)
-    #print('dictionary1:',dictionary1)
     if(parse_args.stats):
        statistics_data = get_statistics_data(unredacted_data)
-       extract_statistics(statistics_data)
-
-
-
