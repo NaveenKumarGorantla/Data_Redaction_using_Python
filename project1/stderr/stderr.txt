@@ -1,4 +1,4 @@
-names_redacted >>> [15, 0]
-dates_redacted >>> [4, 0]
-genders_redacted >>> [32, 32]
-phonenumber_redacted >>> [2, 0]
+names_redacted >>> [8]
+dates_redacted >>> [3]
+genders_redacted >>> [14]
+phonenumber_redacted >>> [5]

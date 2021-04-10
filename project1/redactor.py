@@ -18,6 +18,8 @@ nltk.download('wordnet')
 nltk.download('punkt')
 #nltk.download('all')
 def data_input(input_files):
+    if ( len(input_files) == 0):
+        raise   Exception('empty values')
     list_filedata = []
     list_filepaths =[]
     for eachfile in input_files:
@@ -36,6 +38,8 @@ def data_input(input_files):
 
 
 def redact_names(list_filedata):
+    if ( len(list_filedata) == 0):
+            raise Exception('Empty data')
     redacted_names_data = []
     label = "PERSON"
     list_person_names = []
@@ -61,6 +65,9 @@ def redact_names(list_filedata):
     return redacted_names_data     
 
 def redact_phones(list_filedata):
+
+    if ( len (list_filedata) == 0):
+            raise Exception('Empty data')
     redacted_phone_data = []
     for textdata in list_filedata:
         list_phones = re.findall(r'\(?\+?[0-9][0-9]?[-\.\s]?\(?\d{3}\)?[-\.\s]?\(?\d{3}\)?[-\.\s]?\(?\d{4}\)?', textdata)
@@ -74,6 +81,9 @@ def redact_phones(list_filedata):
     return redacted_phone_data
 
 def redact_genders(list_filedata):
+    if ( len (list_filedata)== 0):
+            raise Exception('Empty data')
+
     gender = ['actress', 'aunt', 'aunts', 'boy', 'boyfriend', 'boyfriends', 'boys', 'bride', 'brother', 'brothers', 'chairman', 'chairwoman', 'dad', 'dads', 'daughter',
               'daughters', 'dude', 'father', 'fathers', 'female', 'fiance', 'fiancee', 'gentleman', 'gentlemen', 'girl', 'girlfriend', 'girlfriends', 'girls', 'god',
               'goddess', 'granddaughter', 'grandfather', 'grandma', 'grandmother', 'grandpa', 'grandson', 'groom', 'guy', 'he', "he's", 'her', 'heroine', 'herself', 'him',
@@ -107,6 +117,8 @@ def redact_genders(list_filedata):
 
 
 def redact_dates(list_filedata):
+    if ( len (list_filedata) == 0):
+            raise Exception('Empty data')
 
     redacted_data = []
     for dates in list_filedata:
@@ -125,7 +137,8 @@ def redact_dates(list_filedata):
     return redacted_data
 
 def redact_concept(list_filedata, word):
-    
+    if ( len (list_filedata) == 0):
+            raise Exception('Empty data')
     list_word_synonyms = []
     for w in word:
         for synonyms in wordnet.synsets(w): 
