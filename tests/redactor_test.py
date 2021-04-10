@@ -90,7 +90,7 @@ def test_redactphones():
 def test_output():
     list1 = [['*.txt']]
     data = redactor.data_input(list1)
-    filename = 'output/'
+    filename = 'files/'
     outputdata = redactor.file_output(list1,data,filename)
     if (outputdata):
         assert True
