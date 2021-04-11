@@ -18,9 +18,8 @@ nltk.download('wordnet')
 nltk.download('punkt')
 #nltk.download('all')
 def data_input(input_files):
-    print('input files',input_files)
-    #if ( len(input_files) == 0):
-     #   raise   Exception('empty values')
+    if ( len(input_files) == 0):
+        raise   Exception('empty values')
     list_filedata = []
     list_filepaths =[]
     for eachfile in input_files:
@@ -28,7 +27,7 @@ def data_input(input_files):
             filename = filename
             filepaths = glob.glob(str(filename))
             list_filepaths.append(filepaths)
-    
+
     filepaths_list = nltk.flatten(list_filepaths)
     for filepath in filepaths_list:
         fileopen = open(filepath)
@@ -97,16 +96,16 @@ def redact_genders(list_filedata):
     gender = [i.lower() for i in gender]
     i = 0
     while i < len(list_filedata):
-        data = list_filedata[0]
-   # for data in list_filedata:
+        data = list_filedata[i]
         redacted_gender_data = []
         for sentence in sent_tokenize(data):
             redacted_words = []
             word_tokens = word_tokenize(sentence)
             for word in word_tokens:
                 if (word.lower() in gender):
-                    word ='\u2588'
-                    redacted_words.append(word)
+                   # print ('word', word)
+                    pattern='\u2588'*len(word)
+                    redacted_words.append(pattern)
                 else:
                     redacted_words.append(word)
             redacted_sentences = ' '.join([str(x) for x in redacted_words])
@@ -120,19 +119,21 @@ def redact_genders(list_filedata):
 def redact_dates(list_filedata):
     if ( len (list_filedata) == 0):
             raise Exception('Empty data')
-
     redacted_data = []
+    dateformats = []
     for dates in list_filedata:
         dateformat1 = re.findall(r'\d{1,2}\w?\w?\s+(?:January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct            |Nov|Dec)\s+\d{4}',dates)
         dateformat2 = re.findall( r'(?:January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)[\s,]            \d{1,2}[\s,]*\d{2,4}',dates)
        
         dateformat3 = re.findall(r'\d{2}[/-]\d{2}[/-]\d{4}', dates)
-        for element in dateformat2:
-            dateformat1.append(element)
-        for element in dateformat3:
-            dateformat1.append(element)
-        for element in dateformat1:
-            dates= dates.replace(element, u"\u2588" * len(element))
+        dateformat4 = re.findall(r'^(1[0-2]|0[1-9])/(3[01]|[12][0-9]|0[1-9])/[0-9]{4}', dates)
+        dateformats = dateformat1 + dateformat2 + dateformat3 + dateformat4
+        i = 0
+        while( i < len(dateformats)):
+            date = dateformats[i]
+            pattern = u"\u2588" * len(date)
+            dates= dates.replace(date, pattern)
+            i = i + 1
         redacted_data.append(dates)
     
     return redacted_data
@@ -155,7 +156,6 @@ def redact_concept(list_filedata, word):
     i = 0
     while i < len(list_filedata):
         data = list_filedata[i]
-    #for data in list_filedata:
         sentences = sent_tokenize(data)
         for sentence in sentences:
             words = word_tokenize(sentence)
@@ -211,6 +211,7 @@ def get_statistics_data(list_filedata):
     count_genders_redacted = []
     i = 0
     while i < len(genders_redacted):
+        print (genders_redacted)
         collection = []
         count = 0
         wordlist = word_tokenize(genders_redacted[i])
@@ -256,7 +257,6 @@ def get_statistics_data(list_filedata):
 
 def file_output(files, data,filename):
     list_files = []
-   # print(data)
     for i in files:
         for file in i:
             list_files.append(glob.glob(file))
@@ -290,9 +290,7 @@ if __name__ == '__main__':
     argparser.add_argument("--output", type=str, required=True, help="File location of Redacted files")
    
     parse_args =argparser.parse_args()
-   #print("args_input:", args.input, args.names)
     data = data_input(parse_args.input)
-    #print("data from data_input",data)
     if(parse_args.genders):
         data = redact_genders(data)
     if(parse_args.names):
@@ -303,7 +301,6 @@ if __name__ == '__main__':
         data = redact_dates(data)
     if(parse_args.concept):
         data = redact_concept(data,parse_args.concept)
-    print('fsdfs',parse_args.output)
     file_output(parse_args.input,data,parse_args.output)
 
     unredacted_data = data_input(parse_args.input)
