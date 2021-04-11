@@ -1,4 +1,7 @@
 # cs5293sp21-project1
+
+Name - NAVEEN KUMAR GORANTLA Email - Naveen.Kumar.Gorantla-1@ou.edu
+
 The Redactor
 
 Introduction
@@ -24,6 +27,16 @@ Each redacted files is transformed to new files of the same name with the .redac
 The final parameter, --stats, describes the file or location to write the statistics of the redacted files. Below we discuss each of the parameter in additional detail.
 
 Python Libraries required - argparse, nltk, re, glob, os , ntpath
+
+pipenv install argparse
+pipenv install nltk
+import argparse
+import nltk
+import glob
+import re
+import os
+import ntpath
+
 
 Methods Implemented:
 
