@@ -153,6 +153,7 @@ def redact_concept(list_filedata, word):
         for i in item:
             total_list.append(i)
     redacted_concepts = []
+    print(total_list)
     i = 0
     while i < len(list_filedata):
         data = list_filedata[i]

@@ -3,3 +3,8 @@ kid
 child
 children
 
+
+'kids', 'bairn', 'buster', 'changeling', 'child_prodigy', 'infant_prodigy', 'wonder_child', 'foster-child', 'foster_child', 'fosterling', 'imp', 'scamp', 'monkey', 'rascal', 
+'rapscallion', 'scalawag', 'scallywag', 'kiddy', 'orphan', 'peanut', 'pickaninny', 'piccaninny', 'picaninny', 'poster_child', 'preschooler', 'kindergartner', 'kindergartener',
+ 'silly', 'sprog', 'toddler', 'yearling', 'tot', 'bambino', 'urchin', 'waif', 'street_child', 'army_brat', 'baby', 'babe', 'infant', 'female_offspring', 'male_offspring', 'man
+-child', 'stepchild' mother father daughter aunt newyork calfornia man woman grandmother
